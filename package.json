@@ -1,0 +1,17 @@
+{
+	"name": "sprintanalyzer",
+	"title": "Sprint Analyzer",
+	"description": "Sprint Analyzer",
+	"version": "0.0.0",
+	"private": true,
+	"engines": {
+		"node": ">=0.10.8"
+	},
+	"dependencies": {
+		"jira": "=0.8.*"
+	},
+	"devDependencies": {
+		"jasmine-node": "=1.13.*"
+	},
+	"readmeFilename": "README.md"
+}
