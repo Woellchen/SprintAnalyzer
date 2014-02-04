@@ -1,7 +1,10 @@
 module.exports = {
-	"host": "",
-	"port": 0,
-	"user": "",
-	"password": "",
-	"consumer_key": ""
+	"jira_host": "",
+	"jira_port": 0,
+	"jira_user": "",
+	"jira_password": "",
+	"jira_consumer_key": "",
+
+	"app_host": "",
+	"app_port": 0
 };
