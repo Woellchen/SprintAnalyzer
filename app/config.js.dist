@@ -1,3 +1,7 @@
 module.exports = {
+	"host": "",
+	"port": 0,
+	"user": "",
+	"password": "",
 	"consumer_key": ""
 };
