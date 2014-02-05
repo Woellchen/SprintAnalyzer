@@ -4,9 +4,13 @@ var Hapi = require('hapi');
 var server = new Hapi.Server(config.app_host, config.app_port);
 
 server.route({
-	'path': '/',
+	'path': '/{path*}',
 	'method': 'GET',
-	'handler': require('app/handlers/IndexHandler.js')
+	'handler': {
+		'directory': {
+			'path': __dirname + '/../www'
+		}
+	}
 });
 server.route({
 	'path': '/projects/list',
