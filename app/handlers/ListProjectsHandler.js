@@ -6,11 +6,14 @@ var listProjects = function(request, reply) {
 			throw error;
 		}
 
-		var projects = {};
+		var projects = [];
 		for (var i in jiraProjects) {
 			var jiraProject = jiraProjects[i];
 
-			projects[jiraProject.id] = jiraProject.name;
+			projects.push({
+				'id': jiraProject.id,
+				'name': jiraProject.name
+			});
 		}
 
 		reply(projects).type('application/json');
