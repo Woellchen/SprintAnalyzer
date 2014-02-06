@@ -1,0 +1,11 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Projects</h3>
+    </div>
+    <div class="panel-body">
+        <span ng-show="loading" class="loading">Loading..</span>
+        <ul>
+            <li ng-repeat="project in projects | orderBy:'name'"><a href="#/project/{{project.id}}">{{project.name}}</a></li>
+        </ul>
+    </div>
+</div>

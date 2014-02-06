@@ -1,0 +1,11 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Sprints</h3>
+    </div>
+    <div class="panel-body">
+        <span ng-show="loading" class="loading">Loading..</span>
+        <ul>
+            <li ng-repeat="sprint in sprints | orderBy:'name'"><a href="#/sprints/{{sprint.id}}">{{sprint.name}}</a></li>
+        </ul>
+    </div>
+</div>
