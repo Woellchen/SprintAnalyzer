@@ -8,9 +8,11 @@
         <table ng-hide="loading" class="table table-bordered">
             <tr>
                 <th ng-repeat="label in labels">{{label.name}}</th>
+                <th>Without Label</th>
             </tr>
             <tr>
                 <td ng-repeat="label in labels">{{label.value}}</td>
+                <td>{{numIssuesWithoutLabel}}</td>
             </tr>
         </table>
 

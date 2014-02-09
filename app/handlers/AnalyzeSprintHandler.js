@@ -76,6 +76,7 @@ var analyzeSprint = function(request, reply) {
 						'XXL': 0,
 						'?_size_unclear': 0
 					};
+					var labelsTotal = 0;
 					for (var issueKey in allIssueLabels) {
 						var issueLabels = allIssueLabels[issueKey];
 
@@ -84,6 +85,7 @@ var analyzeSprint = function(request, reply) {
 
 							if (typeof labels[issueLabel] !== 'undefined') {
 								labels[issueLabel]++;
+								labelsTotal++;
 							}
 						}
 					}
@@ -94,6 +96,7 @@ var analyzeSprint = function(request, reply) {
 						'numIssuesIncomplete': numIssuesIncomplete,
 						'numIssuesCompleted': numIssuesCompleted,
 						'numIssuesCompletedAddedDuringSprint': numIssuesCompletedAddedDuringSprint,
+						'numIssuesWithoutLabel': numIssuesAll - labelsTotal,
 						'labels': labels
 					};
 

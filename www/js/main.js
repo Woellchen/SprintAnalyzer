@@ -115,6 +115,7 @@ angular.module('main', ['ngRoute'])
 
 			$scope.labels = labels;
 			$scope.numbers = numbers;
+			$scope.numIssuesWithoutLabel = statistics.numIssuesWithoutLabel;
 			$scope.loading = false;
 		});
 	});
