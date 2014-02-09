@@ -23,6 +23,11 @@ server.route({
 	'handler': require('app/handlers/ListSprintsHandler.js')
 });
 server.route({
+	'path': '/projects/{projectId}/sprints/{sprintId}/analyze',
+	'method': 'GET',
+	'handler': require('app/handlers/AnalyzeSprintHandler.js')
+});
+server.route({
 	'path': '/issues/labels/list',
 	'method': 'GET',
 	'handler': require('app/handlers/ListIssueLabelsHandler.js')

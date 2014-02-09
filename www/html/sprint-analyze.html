@@ -1,0 +1,28 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Sprints</h3>
+    </div>
+    <div class="panel-body">
+        <span ng-show="loading" class="loading">Loading..</span>
+
+        <table ng-hide="loading" class="table table-bordered">
+            <tr>
+                <th ng-repeat="label in labels">{{label.name}}</th>
+            </tr>
+            <tr>
+                <td ng-repeat="label in labels">{{label.value}}</td>
+            </tr>
+        </table>
+
+        <table ng-hide="loading" class="table table-bordered">
+            <tr>
+                <th class="col-xs-4">Type</th>
+                <th>Value</th>
+            </tr>
+            <tr ng-repeat="number in numbers">
+                <td>{{number.name}}</td>
+                <td>{{number.value}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

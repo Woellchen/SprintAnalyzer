@@ -5,7 +5,7 @@
     <div class="panel-body">
         <span ng-show="loading" class="loading">Loading..</span>
         <ul>
-            <li ng-repeat="sprint in sprints | orderBy:'name'"><a href="#/sprints/{{sprint.id}}">{{sprint.name}}</a></li>
+            <li ng-repeat="sprint in sprints | orderBy:'name'"><a href="#/projects/{{projectId}}/sprints/{{sprint.id}}">{{sprint.name}}</a></li>
         </ul>
     </div>
 </div>
