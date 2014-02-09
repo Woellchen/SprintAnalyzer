@@ -43,6 +43,31 @@ angular.module('main', ['ngRoute'])
 		};
 	})
 
+	.factory('Socket', function($rootScope) {
+		var socket = io.connect();
+
+		var applyCallback = function(arguments, callback) {
+			$rootScope.$apply(function() {
+				callback.apply(socket, arguments);
+			});
+		};
+		var on = function(event, callback) {
+			socket.on(event, function() {
+				applyCallback(arguments, callback);
+			});
+		};
+		var emit = function(event, data, callback) {
+			socket.emit(event, data, function() {
+				applyCallback(arguments, callback);
+			});
+		};
+
+		return {
+			'on': on,
+			'emit': emit
+		};
+	})
+
 	.config(function($routeProvider) {
 		$routeProvider
 			.when('/', {
@@ -79,7 +104,7 @@ angular.module('main', ['ngRoute'])
 		});
 	})
 
-	.controller('SprintAnalyzeController', function($scope, $routeParams, Sprints) {
+	.controller('SprintAnalyzeController', function($scope, $routeParams, Sprints, Socket) {
 		$scope.loading = true;
 		Sprints.analyzeSprint($routeParams.projectId, $routeParams.sprintId).then(function(statistics) {
 			var labels = [];

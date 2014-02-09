@@ -40,6 +40,10 @@ server.route({
 	}
 });
 
+var io = require('socket.io');
+
 server.start(function() {
+	io.listen(server.listener);
+
 	console.log('Server started at: ' + server.info.uri);
 });

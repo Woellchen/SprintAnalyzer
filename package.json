@@ -10,7 +10,8 @@
 	"dependencies": {
 		"jira": "git://github.com/Woellchen/node-jira#develop",
 		"async": "=0.2.*",
-		"hapi": "=2.1.*"
+		"hapi": "=2.1.*",
+		"socket.io": "=0.9.*"
 	},
 	"devDependencies": {
 		"jasmine-node": "=1.13.*"
