@@ -62,7 +62,7 @@ var analyzeSprint = function(request, reply) {
 					}(incompleteIssue.id);
 				}
 
-				async.parallel(tasks, function(error, issueLabels) {
+				async.parallel(tasks, function(error, allIssueLabels) {
 					if (error) {
 						throw error;
 					}
@@ -76,9 +76,15 @@ var analyzeSprint = function(request, reply) {
 						'XXL': 0,
 						'?_size_unclear': 0
 					};
-					for (var issueKey in issueLabels) {
-						for (var i in issueLabels[issueKey]) {
-							labels[issueLabels[issueKey][i]]++;
+					for (var issueKey in allIssueLabels) {
+						var issueLabels = allIssueLabels[issueKey];
+
+						for (var i in issueLabels) {
+							var issueLabel = issueLabels[i];
+
+							if (labels[issueLabel]) {
+								labels[issueLabel]++;
+							}
 						}
 					}
 
