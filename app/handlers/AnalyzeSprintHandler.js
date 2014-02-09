@@ -82,7 +82,7 @@ var analyzeSprint = function(request, reply) {
 						for (var i in issueLabels) {
 							var issueLabel = issueLabels[i];
 
-							if (labels[issueLabel]) {
+							if (typeof labels[issueLabel] !== 'undefined') {
 								labels[issueLabel]++;
 							}
 						}
