@@ -135,6 +135,10 @@ angular.module('main', ['ngRoute'])
 				{
 					'name': 'Issues Completed Added During Sprint',
 					'value': statistics.numIssuesCompletedAddedDuringSprint
+				},
+				{
+					'name': 'Issues Incomplete Added During Sprint',
+					'value': statistics.numIssuesAddedDuringSprint - statistics.numIssuesCompletedAddedDuringSprint
 				}
 			];
 
