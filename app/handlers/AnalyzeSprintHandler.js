@@ -1,6 +1,5 @@
 var config = require('app/config.js'),
 	jira = require('app/models/Jira.js'),
-	async = require('async'),
 	Q = require('q');
 
 var getProject = function(projectId) {
@@ -44,6 +43,19 @@ var getSprintIssues = function(sprintId) {
 	}
 };
 
+var findIssue = function(issueId) {
+	var deferred = Q.defer();
+	jira.findIssue(issueId, function(error, issue) {
+		if (error) {
+			return deferred.reject(error);
+		}
+
+		deferred.resolve(issue);
+	});
+
+	return deferred.promise;
+};
+
 var analyzeSprint = function(request, reply) {
 	var projectId = request.params.projectId;
 	var sprintId = request.params.sprintId;
@@ -55,34 +67,19 @@ var analyzeSprint = function(request, reply) {
 		var numIssuesCompleted = issues.contents.completedIssuesEstimateSum.value;
 
 		var numIssuesCompletedAddedDuringSprint = 0;
-		var tasks = {};
-
 		var allIssues = issues.contents.completedIssues.concat(issues.contents.incompletedIssues);
+		var issuePromises = [];
 		for (var i in allIssues) {
 			var issue = allIssues[i];
 
-			tasks[issue.key] = function(issueId) {
-				return function(callback) {
-					jira.findIssue(issueId, function(error, data) {
-						if (error) {
-							callback(error, null);
-						} else {
-							callback(null, data.fields.labels);
-						}
-					});
-				};
-			}(issue.id);
+			issuePromises.push(findIssue(issue.id));
 
 			if (issues.contents.issueKeysAddedDuringSprint[issue.key] === true && issue.status.id === config.jira_status_closed_id) {
 				numIssuesCompletedAddedDuringSprint++;
 			}
 		}
 
-		async.parallel(tasks, function(error, allIssueLabels) {
-			if (error) {
-				throw error;
-			}
-
+		Q.all(issuePromises).then(function(jiraIssues) {
 			var labels = {
 				'XS': 0,
 				'S': 0,
@@ -93,9 +90,9 @@ var analyzeSprint = function(request, reply) {
 				'?_size_unclear': 0
 			};
 			var labelsTotal = 0;
-			for (var issueKey in allIssueLabels) {
-				var issueLabels = allIssueLabels[issueKey];
 
+			for (var i in jiraIssues) {
+				var issueLabels = jiraIssues[i].fields.labels;
 				for (var i in issueLabels) {
 					var issueLabel = issueLabels[i];
 
