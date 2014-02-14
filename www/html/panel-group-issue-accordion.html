@@ -1,0 +1,26 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{panelGroup.heading}}</h3>
+    </div>
+    <div class="panel-body">
+        <div class="panel-group" id="accordion_{{panelGroup.id}}">
+            <div ng-repeat="accordion in panelGroup.accordions" class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion_{{panelGroup.id}}" data-target="#collapse_{{panelGroup.id}}_{{$index}}">
+                            {{accordion.name}}: {{accordion.issues.length}}<span ng-if="accordion.info"> - {{accordion.info}}</span>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse_{{panelGroup.id}}_{{$index}}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <ul>
+                            <li ng-repeat="issue in accordion.issues"><a href="{{baseUrl}}{{issue}}" target="_blank">{{issue}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-if="panelGroup.footer" class="panel-footer">{{panelGroup.footer}}</div>
+</div>

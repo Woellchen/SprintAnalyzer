@@ -1,30 +1,5 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Sprints</h3>
-    </div>
-    <div class="panel-body">
-        <span ng-show="loading" class="loading">Loading..</span>
+<span ng-show="loading" class="loading"><h3>Loading..</h3></span>
 
-        <table ng-hide="loading" class="table table-bordered">
-            <tr>
-                <th ng-repeat="label in labels">{{label.name}}</th>
-                <th>Without Label</th>
-            </tr>
-            <tr>
-                <td ng-repeat="label in labels">{{label.value}}</td>
-                <td>{{numIssuesWithoutLabel}}</td>
-            </tr>
-        </table>
+<div ng-hide="loading" class="page-header"><h1>{{projectName}} <small>{{sprintName}}</small></h1></div>
 
-        <table ng-hide="loading" class="table table-bordered">
-            <tr>
-                <th class="col-xs-4">Type</th>
-                <th>Value</th>
-            </tr>
-            <tr ng-repeat="number in numbers">
-                <td>{{number.name}}</td>
-                <td>{{number.value}}</td>
-            </tr>
-        </table>
-    </div>
-</div>
+<div ng-hide="loading" ng-include="'/html/panel-group-issue-accordion.html'" ng-repeat="panelGroup in panelGroups"></div>

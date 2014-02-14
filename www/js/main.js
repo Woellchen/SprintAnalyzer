@@ -1,4 +1,4 @@
-angular.module('main', ['ngRoute'])
+angular.module('main', ['ngRoute', 'naturalSort'])
 
 	.factory('Projects', function($q, $http) {
 		var getProjects = function() {
@@ -37,9 +37,30 @@ angular.module('main', ['ngRoute'])
 			return deferred.promise;
 		};
 
+		var getNumCompletedIssues = function(undeterminedIssues, completedIssues) {
+			var num = 0;
+			if (undeterminedIssues.length === 0 || completedIssues.length === 0) {
+				return num;
+			}
+
+			for (var i in undeterminedIssues) {
+				if (completedIssues.indexOf(undeterminedIssues[i]) > -1) {
+					num++;
+				}
+			}
+
+			return num;
+		};
+
+		var getAccumulatedVelocity = function(labelVelocity, labelName, numIssues) {
+			return labelVelocity[labelName] * numIssues;
+		};
+
 		return {
 			getSprints: getSprints,
-			analyzeSprint: analyzeSprint
+			analyzeSprint: analyzeSprint,
+			getNumCompletedIssues: getNumCompletedIssues,
+			getAccumulatedVelocity: getAccumulatedVelocity
 		};
 	})
 
@@ -104,47 +125,75 @@ angular.module('main', ['ngRoute'])
 		});
 	})
 
-	.controller('SprintAnalyzeController', function($scope, $routeParams, Sprints, Socket) {
+	.controller('SprintAnalyzeController', function($scope, $routeParams, Sprints, Socket, naturalService) {
 		$scope.loading = true;
 		Sprints.analyzeSprint($routeParams.projectId, $routeParams.sprintId).then(function(statistics) {
+			var panelGroups = [];
+			var panelGroupId = 0;
+			var totalVelocity = 0;
+
 			var labels = [];
 			for (var name in statistics.labels) {
+				statistics.labels[name].sort(naturalService.naturalSort);
+				var numCompletedLabelIssues = Sprints.getNumCompletedIssues(statistics.labels[name], statistics.completedIssues);
+				totalVelocity += Sprints.getAccumulatedVelocity(statistics.labelVelocity, name, numCompletedLabelIssues);
+
 				labels.push({
 					'name': name,
-					'value': statistics.labels[name]
-				})
+					'info': 'completed ' + numCompletedLabelIssues + '/' + statistics.labels[name].length,
+					'issues': statistics.labels[name]
+				});
 			}
+			panelGroups.push({
+				'id': panelGroupId++,
+				'heading': 'Issue Labels',
+				'accordions': labels,
+				'footer': 'Total velocity: ' + totalVelocity
+			});
+
+			statistics.allIssues.sort(naturalService.naturalSort);
+			statistics.completedIssues.sort(naturalService.naturalSort);
+			statistics.incompleteIssues.sort(naturalService.naturalSort);
+			statistics.addedDuringSprintIssues.sort(naturalService.naturalSort);
+			statistics.completedAddedDuringSprintIssues.sort(naturalService.naturalSort);
+			statistics.incompletedAddedDuringSprintIssues.sort(naturalService.naturalSort);
 
 			var numbers = [
 				{
 					'name': 'All Issues',
-					'value': statistics.numIssuesAll
+					'issues': statistics.allIssues
 				},
 				{
 					'name': 'Issues Completed',
-					'value': statistics.numIssuesCompleted
+					'issues': statistics.completedIssues
 				},
 				{
 					'name': 'Issues Incomplete',
-					'value': statistics.numIssuesIncomplete
+					'issues': statistics.incompleteIssues
 				},
 				{
 					'name': 'Issues Added During Sprint',
-					'value': statistics.numIssuesAddedDuringSprint
+					'issues': statistics.addedDuringSprintIssues
 				},
 				{
 					'name': 'Issues Completed Added During Sprint',
-					'value': statistics.numIssuesCompletedAddedDuringSprint
+					'issues': statistics.completedAddedDuringSprintIssues
 				},
 				{
 					'name': 'Issues Incomplete Added During Sprint',
-					'value': statistics.numIssuesAddedDuringSprint - statistics.numIssuesCompletedAddedDuringSprint
+					'issues': statistics.incompletedAddedDuringSprintIssues
 				}
 			];
+			panelGroups.push({
+				'id': panelGroupId++,
+				'heading': 'Issue Statistics',
+				'accordions': numbers
+			});
 
-			$scope.labels = labels;
-			$scope.numbers = numbers;
-			$scope.numIssuesWithoutLabel = statistics.numIssuesWithoutLabel;
+			$scope.projectName = statistics.projectName;
+			$scope.sprintName = statistics.sprintName;
+			$scope.baseUrl = statistics.baseUrl;
+			$scope.panelGroups = panelGroups;
 			$scope.loading = false;
 		});
 	});
