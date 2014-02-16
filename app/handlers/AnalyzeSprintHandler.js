@@ -1,6 +1,8 @@
 var config = require('app/config.js'),
 	jira = require('app/models/Jira.js'),
-	Q = require('q');
+	Q = require('q'),
+	Storage = require('../models/Storage'),
+	storage = new Storage();
 
 var getProject = function(projectId) {
 	var deferred = Q.defer();
@@ -56,97 +58,113 @@ var findIssue = function(issueId) {
 	return deferred.promise;
 };
 
-var analyzeSprint = function(request, reply) {
-	var projectId = request.params.projectId;
-	var sprintId = request.params.sprintId;
-	var response = {
-		'projectName': '',
-		'sprintName': '',
-		'baseUrl': 'https://' + config.jira_host + ':' + config.jira_port + '/browse/',
-		'allIssues': [],
-		'completedIssues': [],
-		'incompleteIssues': [],
-		'addedDuringSprintIssues': [],
-		'completedAddedDuringSprintIssues': [],
-		'incompletedAddedDuringSprintIssues': [],
-		'labels': {},
-		'labelVelocity': {
-			'XS': 1,
-			'S': 2,
-			'M': 8,
-			'L': 13,
-			'XL': 40,
-			'?_size_unclear': 0,
-			'Without': 0
-		}
+var calculateLables = function(jiraIssues) {
+	var labels = {
+		'XS': [],
+		'S': [],
+		'M': [],
+		'L': [],
+		'XL': [],
+		'?_size_unclear': [],
+		'Without': []
 	};
+	var labelsTotal = 0;
 
-	getProject(projectId).then(function(project) {
-		response.projectName = project.name;
+	for (var i in jiraIssues) {
+		var issueLabels = jiraIssues[i].fields.labels;
 
-		findRapidView(project).then(getSprintIssues(sprintId)).then(function(issues) {
-			response.sprintName = issues.sprint.name;
+		if (issueLabels.length === 0) {
+			labels['Without'].push(jiraIssues[i].key);
+		} else {
+			for (var j in issueLabels) {
+				var issueLabel = issueLabels[j];
 
-			var issuePromises = [];
-			for (var i in issues.contents.completedIssues) {
-				var issue = issues.contents.completedIssues[i];
-
-				response.allIssues.push(issue.key);
-				response.completedIssues.push(issue.key);
-				issuePromises.push(findIssue(issue.id));
-
-				if (issues.contents.issueKeysAddedDuringSprint[issue.key] === true) {
-					response.addedDuringSprintIssues.push(issue.key);
-					response.completedAddedDuringSprintIssues.push(issue.key);
+				if (typeof labels[issueLabel] !== 'undefined') {
+					labels[issueLabel].push(jiraIssues[i].key);
+					labelsTotal++;
 				}
 			}
-			for (var i in issues.contents.incompletedIssues) {
-				var issue = issues.contents.incompletedIssues[i];
+		}
+	}
 
-				response.allIssues.push(issue.key);
-				response.incompleteIssues.push(issue.key);
-				issuePromises.push(findIssue(issue.id));
+	return labels;
+}
 
-				if (issues.contents.issueKeysAddedDuringSprint[issue.key] === true) {
-					response.addedDuringSprintIssues.push(issue.key);
-					response.incompletedAddedDuringSprintIssues.push(issue.key);
+var analyzeSprint = function(request, reply) {
+	storage.getSprint(request.params.sprintId, function(error, sprintData) {
+		if (sprintData) {
+			sprintData.labels = calculateLables(sprintData.jiraIssues);
+			reply(sprintData).type('application/json');
+		} else {
+			var projectId = request.params.projectId;
+			var sprintId = request.params.sprintId;
+			var response = {
+				'projectName': '',
+				'sprintName': '',
+				'baseUrl': 'https://' + config.jira_host + ':' + config.jira_port + '/browse/',
+				'allIssues': [],
+				'completedIssues': [],
+				'incompleteIssues': [],
+				'addedDuringSprintIssues': [],
+				'completedAddedDuringSprintIssues': [],
+				'incompletedAddedDuringSprintIssues': [],
+				'labels': {},
+				'labelVelocity': {
+					'XS': 1,
+					'S': 2,
+					'M': 8,
+					'L': 13,
+					'XL': 40,
+					'?_size_unclear': 0,
+					'Without': 0
 				}
-			}
+			};
 
-			Q.all(issuePromises).then(function(jiraIssues) {
-				var labels = {
-					'XS': [],
-					'S': [],
-					'M': [],
-					'L': [],
-					'XL': [],
-					'?_size_unclear': [],
-					'Without': []
-				};
-				var labelsTotal = 0;
+			getProject(projectId).then(function(project) {
+				response.projectName = project.name;
 
-				for (var i in jiraIssues) {
-					var issueLabels = jiraIssues[i].fields.labels;
+				findRapidView(project).then(getSprintIssues(sprintId)).then(function(issues) {
+					response.sprint = issues.sprint;
 
-					if (issueLabels.length === 0) {
-						labels['Without'].push(jiraIssues[i].key);
-					} else {
-						for (var j in issueLabels) {
-							var issueLabel = issueLabels[j];
+					var issuePromises = [];
+					for (var i in issues.contents.completedIssues) {
+						var issue = issues.contents.completedIssues[i];
 
-							if (typeof labels[issueLabel] !== 'undefined') {
-								labels[issueLabel].push(jiraIssues[i].key);
-								labelsTotal++;
-							}
+						response.allIssues.push(issue.key);
+						response.completedIssues.push(issue.key);
+						issuePromises.push(findIssue(issue.id));
+
+						if (issues.contents.issueKeysAddedDuringSprint[issue.key] === true) {
+							response.addedDuringSprintIssues.push(issue.key);
+							response.completedAddedDuringSprintIssues.push(issue.key);
 						}
 					}
-				}
+					for (var i in issues.contents.incompletedIssues) {
+						var issue = issues.contents.incompletedIssues[i];
 
-				response.labels = labels;
+						response.allIssues.push(issue.key);
+						response.incompleteIssues.push(issue.key);
+						issuePromises.push(findIssue(issue.id));
 
-				reply(response).type('application/json');
+						if (issues.contents.issueKeysAddedDuringSprint[issue.key] === true) {
+							response.addedDuringSprintIssues.push(issue.key);
+							response.incompletedAddedDuringSprintIssues.push(issue.key);
+						}
+					}
+
+					Q.all(issuePromises).then(function(jiraIssues) {
+						response.jiraIssues = jiraIssues;
+
+						if ('CLOSED' === response.sprint.state) {
+							storage.storeSprint(request.params.sprintId, response);
+						}
+						response.labels = calculateLables(jiraIssues);
+
+						reply(response).type('application/json');
+					});
+				});
 			});
-		});
+		}
 	});
 };
 
