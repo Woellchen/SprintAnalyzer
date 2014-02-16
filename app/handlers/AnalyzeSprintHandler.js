@@ -1,4 +1,4 @@
-var config = require('app/config.js'),
+var config = require('app/config'),
 	jira = require('app/models/Jira.js'),
 	Q = require('q'),
 	Storage = require('../models/Storage'),

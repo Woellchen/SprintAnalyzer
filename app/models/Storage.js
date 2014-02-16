@@ -1,4 +1,4 @@
-var config = require('app/config.js'),
+var config = require('app/config'),
 	client = require('redis').createClient(config.redis.port, config.redis.host);
 
 if (config.redis.auth) {

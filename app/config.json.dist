@@ -1,0 +1,22 @@
+{
+	"jira": {
+		"host": "",
+		"port": 0,
+        "user": "",
+        "password": "",
+        "api_version": "latest",
+        "consumer_key": ""
+	},
+
+	"redis": {
+		"host": "0.0.0.0",
+		"port": 6379,
+		"auth": null,
+		"database": null
+	},
+
+	"app": {
+		"host": "",
+		"port": 0
+	}
+}
