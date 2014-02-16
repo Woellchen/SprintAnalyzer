@@ -28,11 +28,6 @@ server.route({
 	'handler': require('app/handlers/AnalyzeSprintHandler.js')
 });
 server.route({
-	'path': '/issues/labels/list',
-	'method': 'GET',
-	'handler': require('app/handlers/ListIssueLabelsHandler.js')
-});
-server.route({
 	'method': '*',
 	'path': '/{p*}',
 	'handler': function(request, reply) {

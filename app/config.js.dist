@@ -4,7 +4,6 @@ module.exports = {
 	"jira_user": "",
 	"jira_password": "",
 	"jira_consumer_key": "",
-	"jira_status_closed_id": 0,
 
 	"app_host": "",
 	"app_port": 0
