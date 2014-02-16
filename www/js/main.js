@@ -52,8 +52,8 @@ angular.module('main', ['ngRoute', 'naturalSort'])
 			return num;
 		};
 
-		var getAccumulatedVelocity = function(labelVelocity, labelName, numIssues) {
-			return labelVelocity[labelName] * numIssues;
+		var getAccumulatedVelocity = function(valueMapping, labelName, numIssues) {
+			return valueMapping[labelName] * numIssues;
 		};
 
 		return {
@@ -133,15 +133,15 @@ angular.module('main', ['ngRoute', 'naturalSort'])
 			var totalVelocity = 0;
 
 			var labels = [];
-			for (var name in statistics.labels) {
-				statistics.labels[name].sort(naturalService.naturalSort);
-				var numCompletedLabelIssues = Sprints.getNumCompletedIssues(statistics.labels[name], statistics.completedIssues);
-				totalVelocity += Sprints.getAccumulatedVelocity(statistics.labelVelocity, name, numCompletedLabelIssues);
+			for (var name in statistics.velocity.issueMapping) {
+				statistics.velocity.issueMapping[name].sort(naturalService.naturalSort);
+				var numCompletedLabelIssues = Sprints.getNumCompletedIssues(statistics.velocity.issueMapping[name], statistics.completedIssues);
+				totalVelocity += Sprints.getAccumulatedVelocity(statistics.velocity.valueMapping, name, numCompletedLabelIssues);
 
 				labels.push({
 					'name': name,
-					'info': 'completed ' + numCompletedLabelIssues + '/' + statistics.labels[name].length,
-					'issues': statistics.labels[name]
+					'info': 'completed ' + numCompletedLabelIssues + '/' + statistics.velocity.issueMapping[name].length,
+					'issues': statistics.velocity.issueMapping[name]
 				});
 			}
 			panelGroups.push({

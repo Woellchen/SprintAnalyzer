@@ -1,8 +1,10 @@
 var config = require('app/config'),
 	jira = require('app/models/Jira.js'),
 	Q = require('q'),
-	Storage = require('../models/Storage'),
-	storage = new Storage();
+	Storage = require('app/models/Storage'),
+	VelocityFactory = require('app/models/velocity/VelocityFactory'),
+	storage = new Storage(),
+	velocityFactory = new VelocityFactory();
 
 var getProject = function(projectId) {
 	var deferred = Q.defer();
@@ -58,42 +60,26 @@ var findIssue = function(issueId) {
 	return deferred.promise;
 };
 
-var calculateLables = function(jiraIssues) {
-	var labels = {
-		'XS': [],
-		'S': [],
-		'M': [],
-		'L': [],
-		'XL': [],
-		'?_size_unclear': [],
-		'Without': []
-	};
-	var labelsTotal = 0;
-
-	for (var i in jiraIssues) {
-		var issueLabels = jiraIssues[i].fields.labels;
-
-		if (issueLabels.length === 0) {
-			labels['Without'].push(jiraIssues[i].key);
-		} else {
-			for (var j in issueLabels) {
-				var issueLabel = issueLabels[j];
-
-				if (typeof labels[issueLabel] !== 'undefined') {
-					labels[issueLabel].push(jiraIssues[i].key);
-					labelsTotal++;
-				}
-			}
-		}
-	}
-
-	return labels;
-}
-
 var analyzeSprint = function(request, reply) {
 	storage.getSprint(request.params.sprintId, function(error, sprintData) {
+		var velocityConfig = {
+			'type': 'labels',
+			'defaultLabel': 'Without',
+			'labels': {
+				'XS': 1,
+				'S': 2,
+				'M': 8,
+				'L': 13,
+				'XL': 40,
+				'?_size_unclear': 0,
+				'Without': 0
+			}
+		};
+		var velocity = velocityFactory.getVelocity(velocityConfig);
+
 		if (sprintData) {
-			sprintData.labels = calculateLables(sprintData.jiraIssues);
+			sprintData.velocity.valueMapping = velocity.getVelocityValueMapping();
+			sprintData.velocity.issueMapping = velocity.groupIssues(sprintData.jiraIssues);
 			reply(sprintData).type('application/json');
 		} else {
 			var projectId = request.params.projectId;
@@ -108,16 +94,7 @@ var analyzeSprint = function(request, reply) {
 				'addedDuringSprintIssues': [],
 				'completedAddedDuringSprintIssues': [],
 				'incompletedAddedDuringSprintIssues': [],
-				'labels': {},
-				'labelVelocity': {
-					'XS': 1,
-					'S': 2,
-					'M': 8,
-					'L': 13,
-					'XL': 40,
-					'?_size_unclear': 0,
-					'Without': 0
-				}
+				'velocity': {}
 			};
 
 			getProject(projectId).then(function(project) {
@@ -158,7 +135,8 @@ var analyzeSprint = function(request, reply) {
 						if ('CLOSED' === response.sprint.state) {
 							storage.storeSprint(request.params.sprintId, response);
 						}
-						response.labels = calculateLables(jiraIssues);
+						response.velocity.valueMapping = velocity.getVelocityValueMapping();
+						response.velocity.issueMapping = velocity.groupIssues(jiraIssues);
 
 						reply(response).type('application/json');
 					});
