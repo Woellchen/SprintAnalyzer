@@ -6,7 +6,7 @@ if (config.redis.auth) {
 }
 
 if (config.redis.database) {
-	client.select(3, function() { /* ... */ });
+	client.select(config.redis.database, function() { /* ... */ });
 }
 
 var redisKeySprint = 'analyzer::sprint::';
