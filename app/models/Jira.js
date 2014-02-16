@@ -1,4 +1,4 @@
-var config = require('app/config.js'),
+var config = require('app/config'),
 	JiraApi = require('jira').JiraApi;
 
-module.exports = new JiraApi('https', config.jira_host, null, config.jira_user, config.jira_password, 'latest', true, true);
+module.exports = new JiraApi('https', config.jira.host, null, config.jira.user, config.jira.password, config.jira.api_version, true, true);

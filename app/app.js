@@ -1,7 +1,7 @@
-var config = require('app/config.js');
+var config = require('app/config');
 var Hapi = require('hapi');
 
-var server = new Hapi.Server(config.app_host, config.app_port);
+var server = new Hapi.Server(config.app.host, config.app.port);
 
 server.route({
 	'path': '/{path*}',
