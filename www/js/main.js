@@ -191,7 +191,7 @@ angular.module('main', ['ngRoute', 'naturalSort'])
 			});
 
 			$scope.projectName = statistics.projectName;
-			$scope.sprintName = statistics.sprintName;
+			$scope.sprintName = statistics.sprint.name;
 			$scope.baseUrl = statistics.baseUrl;
 			$scope.panelGroups = panelGroups;
 			$scope.loading = false;

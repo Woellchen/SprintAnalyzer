@@ -5,6 +5,13 @@ module.exports = {
 	"jira_password": "",
 	"jira_consumer_key": "",
 
+	"redis": {
+		"host": "0.0.0.0",
+		"port": 6379,
+		"auth": null,
+		"database": null
+	},
+
 	"app_host": "",
 	"app_port": 0
 };

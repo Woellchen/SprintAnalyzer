@@ -11,7 +11,8 @@
 		"jira": "git://github.com/Woellchen/node-jira#develop",
 		"hapi": "=2.1.*",
 		"socket.io": "=0.9.*",
-		"q": "=1.0.*"
+		"q": "=1.0.*",
+		"redis": "~0.10"
 	},
 	"devDependencies": {
 		"jasmine-node": "=1.13.*"
