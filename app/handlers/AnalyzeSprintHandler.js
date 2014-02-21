@@ -87,7 +87,7 @@ var analyzeSprint = function(request, reply) {
 			var response = {
 				'projectName': '',
 				'sprintName': '',
-				'baseUrl': 'https://' + config.jira_host + ':' + config.jira_port + '/browse/',
+				'baseUrl': 'https://' + config.jira.host + ':' + config.jira.port + '/browse/',
 				'allIssues': [],
 				'completedIssues': [],
 				'incompleteIssues': [],
