@@ -1,3 +1,8 @@
+require('angular/angular');
+require('angular-route/angular-route');
+
+require('./naturalSort');
+
 angular.module('main', ['ngRoute', 'naturalSort'])
 
 	.factory('Projects', function($q, $http) {
