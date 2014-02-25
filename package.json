@@ -1,21 +1,30 @@
 {
-	"name": "sprintanalyzer",
-	"title": "Sprint Analyzer",
-	"description": "Sprint Analyzer",
-	"version": "0.0.0",
-	"private": true,
-	"engines": {
-		"node": ">=0.10.8"
-	},
-	"dependencies": {
-		"jira": "git://github.com/Woellchen/node-jira#develop",
-		"hapi": "=2.1.*",
-		"socket.io": "=0.9.*",
-		"q": "=1.0.*",
-		"redis": "~0.10"
-	},
-	"devDependencies": {
-		"jasmine-node": "=1.13.*"
-	},
-	"readmeFilename": "README.md"
+  "name": "sprintanalyzer",
+  "title": "Sprint Analyzer",
+  "description": "Sprint Analyzer",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "install": "napa"
+  },
+  "engines": {
+    "node": ">=0.10.8"
+  },
+  "dependencies": {
+    "jira": "git://github.com/Woellchen/node-jira#develop",
+    "hapi": "=2.1.*",
+    "socket.io": "=0.9.*",
+    "q": "=1.0.*",
+    "redis": "~0.10",
+    "napa": "^0.4.0",
+    "moonboots_hapi": "^1.5.1",
+    "jquery": "^2.1.0"
+  },
+  "devDependencies": {
+    "jasmine-node": "=1.13.*"
+  },
+  "napa": {
+    "angular": "angular/bower-angular",
+    "angular-route": "angular/bower-angular-route"
+  }
 }
