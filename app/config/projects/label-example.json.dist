@@ -1,0 +1,16 @@
+{
+	"projectId": "label-example",
+	"velocity": {
+		"type": "labels",
+		"defaultLabel": "Without",
+		"labels": {
+			"XS": 1,
+			"S": 2,
+			"M": 8,
+			"L": 13,
+			"XL": 40,
+			"?_size_unclear": 0,
+			"Without": 0
+		}
+	}
+}

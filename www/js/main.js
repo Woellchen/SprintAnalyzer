@@ -143,11 +143,13 @@ angular.module('main', ['ngRoute', 'naturalSort'])
 				var numCompletedLabelIssues = Sprints.getNumCompletedIssues(statistics.velocity.issueMapping[name], statistics.completedIssues);
 				totalVelocity += Sprints.getAccumulatedVelocity(statistics.velocity.valueMapping, name, numCompletedLabelIssues);
 
-				labels.push({
-					'name': name,
-					'info': 'completed ' + numCompletedLabelIssues + '/' + statistics.velocity.issueMapping[name].length,
-					'issues': statistics.velocity.issueMapping[name]
-				});
+				if (statistics.velocity.issueMapping[name].length > 0) {
+					labels.push({
+						'name': name,
+						'info': 'completed ' + numCompletedLabelIssues + '/' + statistics.velocity.issueMapping[name].length,
+						'issues': statistics.velocity.issueMapping[name]
+					});
+				}
 			}
 			panelGroups.push({
 				'id': panelGroupId++,

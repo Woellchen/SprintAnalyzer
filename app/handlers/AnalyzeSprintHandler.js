@@ -1,10 +1,12 @@
-var config = require('app/config'),
+var config = require('app/config/config'),
 	jira = require('app/models/Jira.js'),
 	Q = require('q'),
 	Storage = require('app/models/Storage'),
 	VelocityFactory = require('app/models/velocity/VelocityFactory'),
+	ProjectConfig = require('app/models/ProjectConfig'),
 	storage = new Storage(),
-	velocityFactory = new VelocityFactory();
+	velocityFactory = new VelocityFactory(),
+	projectConfig = new ProjectConfig();
 
 var getProject = function(projectId) {
 	var deferred = Q.defer();
@@ -62,19 +64,8 @@ var findIssue = function(issueId) {
 
 var analyzeSprint = function(request, reply) {
 	storage.getSprint(request.params.sprintId, function(error, sprintData) {
-		var velocityConfig = {
-			'type': 'labels',
-			'defaultLabel': 'Without',
-			'labels': {
-				'XS': 1,
-				'S': 2,
-				'M': 8,
-				'L': 13,
-				'XL': 40,
-				'?_size_unclear': 0,
-				'Without': 0
-			}
-		};
+
+		var velocityConfig = projectConfig.getConfigForProject(request.params.projectId).velocity;
 		var velocity = velocityFactory.getVelocity(velocityConfig);
 
 		if (sprintData) {

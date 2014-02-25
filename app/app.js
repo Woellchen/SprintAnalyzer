@@ -1,4 +1,4 @@
-var config = require('app/config');
+var config = require('app/config/config');
 var Hapi = require('hapi');
 
 var server = new Hapi.Server(config.app.host, config.app.port);
