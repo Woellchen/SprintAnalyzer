@@ -37,7 +37,7 @@ server.route({
 
 var moonboots_config = {
 	main: __dirname + '/../www/js/main.js',
-	developmentMode: true,
+	developmentMode: config.app.debug,
 	templateFile: __dirname + '/../www/index.html',
 	libraries: [
 		__dirname + '/../www/js/jquery.min.js',
@@ -45,7 +45,6 @@ var moonboots_config = {
 	],
 	stylesheets: [
 		__dirname + '/../www/css/bootstrap.min.css'
-		//, __dirname + '/../www/css/bootstrap-theme.min.css'
 	]
 };
 
