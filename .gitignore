@@ -1,5 +1,9 @@
+# npm
 node_modules
+
+# ide
 .idea
 atlassian-ide-plugin.xml
-app/config.js
-app/config.json
+
+# project
+app/config/config.json

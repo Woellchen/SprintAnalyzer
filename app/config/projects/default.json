@@ -1,0 +1,11 @@
+{
+	"projectId": "default",
+	"velocity": {
+		"type": "story-points",
+		"default": "Without",
+		"story-points": {
+			"min": 0,
+			"max": 20
+		}
+	}
+}
