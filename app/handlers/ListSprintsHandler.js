@@ -6,7 +6,18 @@ var listSprints = function(request, reply) {
 	jira.getProject(projectId, function(error, project) {
 		jira.findRapidView(project.name, function(error, rapidView) {
 			jira.getAllSprintsForRapidView(rapidView.id, function(error, sprints) {
-				reply(sprints).type('application/json');
+				jira.getBacklogForRapidView(rapidView.id, function(error, data) {
+					while (data.sprints.length) {
+						var backlogSprint = data.sprints.pop();
+						if (backlogSprint.state !== 'FUTURE') {
+							continue;
+						}
+
+						sprints.push(backlogSprint);
+					}
+
+					reply(sprints).type('application/json');
+				});
 			});
 		});
 	});
