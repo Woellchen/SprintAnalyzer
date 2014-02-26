@@ -21,28 +21,14 @@ exports.SprintAnalyzeController = function($scope, $routeParams, Sprints, Socket
 	$scope.loading = true;
 	Sprints.analyzeSprint($routeParams.projectId, $routeParams.sprintId).then(function(statistics) {
 		var panelGroups = [];
-		var panelGroupId = 0;
-		var totalVelocity = 0;
+		var panelGroupId = 0,
+			velocity = Sprints.calculateVelocity(statistics, naturalService);
 
-		var labels = [];
-		for (var name in statistics.velocity.issueMapping) {
-			statistics.velocity.issueMapping[name].sort(naturalService.naturalSort);
-			var numCompletedLabelIssues = Sprints.getNumCompletedIssues(statistics.velocity.issueMapping[name], statistics.completedIssues);
-			totalVelocity += Sprints.getAccumulatedVelocity(statistics.velocity.valueMapping, name, numCompletedLabelIssues);
-
-			if (statistics.velocity.issueMapping[name].length > 0) {
-				labels.push({
-					'name': name,
-					'info': 'completed ' + numCompletedLabelIssues + '/' + statistics.velocity.issueMapping[name].length,
-					'issues': statistics.velocity.issueMapping[name]
-				});
-			}
-		}
 		panelGroups.push({
 			'id': panelGroupId++,
 			'heading': 'Issue Labels',
-			'accordions': labels,
-			'footer': 'Total velocity: ' + totalVelocity
+			'accordions': velocity.groups,
+			'footer': 'Total velocity: ' + velocity.totalVelocity
 		});
 
 		statistics.allIssues.sort(naturalService.naturalSort);
@@ -92,7 +78,7 @@ exports.SprintAnalyzeController = function($scope, $routeParams, Sprints, Socket
 	});
 }
 
-exports.ProjectHistoryController = function($scope, $routeParams, $q, Sprints) {
+exports.ProjectHistoryController = function($scope, $routeParams, $q, Sprints, naturalService) {
 	$scope.loading = true;
 	Sprints.getSprints($routeParams.projectId).then(function(sprints) {
 		var sprintPromises = [],
@@ -113,6 +99,7 @@ exports.ProjectHistoryController = function($scope, $routeParams, $q, Sprints) {
 		$q.all(sprintPromises).then(function(jiraSprints) {
 			var issuesData = [],
 				issuesAddedData = [],
+				velocityData = [],
 				sprint;
 			for (var i = 0; i < jiraSprints.length; i++) {
 				sprint = jiraSprints[i];
@@ -128,6 +115,11 @@ exports.ProjectHistoryController = function($scope, $routeParams, $q, Sprints) {
 					incomplete: sprint.incompletedAddedDuringSprintIssues.length,
 					complete: sprint.completedAddedDuringSprintIssues.length
 				});
+				velocityData.push({
+					sprintId: sprint.sprint.id,
+					sprint: sprint.sprint.name,
+					velocity: Sprints.calculateVelocity(sprint, naturalService).totalVelocity
+				});
 			}
 
 			$scope.projectName = sprint.projectName;
@@ -140,6 +132,10 @@ exports.ProjectHistoryController = function($scope, $routeParams, $q, Sprints) {
 				'axis': 'Issues',
 				'data': issuesAddedData
 			};
+			$scope.velocity = {
+				'axis': 'Velocity',
+				'data': velocityData
+			}
 		});
 	});
 };
