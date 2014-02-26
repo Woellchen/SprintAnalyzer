@@ -1,5 +1,47 @@
-<span ng-show="loading" class="loading"><h3>Loading..</h3></span>
-
 <div ng-hide="loading" class="page-header"><h1>{{projectName}} <small>{{sprintName}}</small></h1></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-6">
+			<span ng-show="loading" class="loading"><h3>Loading..</h3></span>
 
-<div ng-hide="loading" ng-include="'/html/panel-group-issue-accordion.html'" ng-repeat="panelGroup in panelGroups"></div>
+			<div ng-hide="loading" ng-include="'/html/panel-group-issue-accordion.html'" ng-repeat="panelGroup in panelGroups"></div>
+		</div>
+		<div class="col-md-3">
+			<span ng-show="loading" class="loading"><h3>Loading..</h3></span>
+			<div ng-hide="loading" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Issues by Issue Type</h3>
+				</div>
+				<div class="panel-body">
+					<d3-pie-chart data="issuesByTypes" label="name"></d3-pie-chart>
+				</div>
+			</div>
+			<div ng-hide="loading" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Issues by Components</h3>
+				</div>
+				<div class="panel-body">
+					<d3-pie-chart data="issuesByComponents" label="name"></d3-pie-chart>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div ng-hide="loading" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Fixed Issues by Issue Type</h3>
+				</div>
+				<div class="panel-body">
+					<d3-pie-chart data="closedIssuesByTypes" label="name"></d3-pie-chart>
+				</div>
+			</div>
+			<div ng-hide="loading" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Fixed Issues by Components</h3>
+				</div>
+				<div class="panel-body">
+					<d3-pie-chart data="closedIssuesByComponents" label="name"></d3-pie-chart>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

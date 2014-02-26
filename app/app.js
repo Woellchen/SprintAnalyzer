@@ -44,6 +44,7 @@ var moonboots_config = {
 		__dirname + '/../www/js/bootstrap.min.js'
 	],
 	stylesheets: [
+		__dirname + '/../www/css/main.css',
 		__dirname + '/../www/css/bootstrap.min.css'
 	]
 };

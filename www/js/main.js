@@ -6,6 +6,7 @@ angular.module('d3Helper', []);
 require('./naturalSort');
 var controllers = require('./controllers');
 require('./directives/d3StackedBars');
+require('./directives/d3PieChart');
 
 var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 
@@ -88,14 +89,68 @@ var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 				'totalVelocity': totalVelocity,
 				'groups': groups
 			}
+		};
+
+		var groupIssuesByMapping = function(mapping) {
+			var types = [];
+			for (var j in mapping) {
+				types.push({
+					'label': "(" + mapping[j] + ") " + j,
+					'count': mapping[j]
+				});
+			}
+
+			return types;
 		}
+
+		var groupIssuesByType = function(statistics, closedOnly) {
+			var typesMapping = {},
+				issueType,
+				issue;
+			for (var i in statistics.jiraIssues) {
+				issue = statistics.jiraIssues[i];
+				if (!closedOnly || -1 !== statistics.completedIssues.indexOf(issue.key)) {
+					issueType = issue.fields.issuetype.name;
+					if (!typesMapping[issueType]) {
+						typesMapping[issueType] = 0;
+					}
+
+					typesMapping[issueType]++;
+				}
+			}
+
+			return groupIssuesByMapping(typesMapping);
+		};
+
+		var groupIssuesByComponent = function(statistics, closedOnly) {
+			var mapping = {},
+				component,
+				issue;
+			for (var i in statistics.jiraIssues) {
+				issue = statistics.jiraIssues[i];
+				if (!closedOnly || -1 !== statistics.completedIssues.indexOf(issue.key)) {
+					for (var j in issue.fields.components) {
+						component = issue.fields.components[j].name;
+						if (!mapping[component]) {
+							mapping[component] = 0;
+						}
+
+						mapping[component]++;
+					}
+				}
+			}
+
+			return groupIssuesByMapping(mapping);
+		};
 
 		return {
 			getSprints: getSprints,
 			analyzeSprint: analyzeSprint,
 			getNumCompletedIssues: getNumCompletedIssues,
 			getAccumulatedVelocity: getAccumulatedVelocity,
-			calculateVelocity: calculateVelocity
+			calculateVelocity: calculateVelocity,
+			groupIssuesByType: groupIssuesByType,
+			groupIssuesByComponent: groupIssuesByComponent
 		};
 	})
 

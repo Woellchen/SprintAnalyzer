@@ -70,6 +70,10 @@ exports.SprintAnalyzeController = function($scope, $routeParams, Sprints, Socket
 			'accordions': numbers
 		});
 
+		$scope.issuesByTypes = { data: Sprints.groupIssuesByType(statistics) };
+		$scope.closedIssuesByTypes = { data: Sprints.groupIssuesByType(statistics, true) };
+		$scope.issuesByComponents = { data: Sprints.groupIssuesByComponent(statistics) };
+		$scope.closedIssuesByComponents = { data: Sprints.groupIssuesByComponent(statistics, true) };
 		$scope.projectName = statistics.projectName;
 		$scope.sprintName = statistics.sprint.name;
 		$scope.baseUrl = statistics.baseUrl;
