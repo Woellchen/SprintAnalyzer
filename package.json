@@ -25,6 +25,7 @@
   },
   "napa": {
     "angular": "angular/bower-angular",
-    "angular-route": "angular/bower-angular-route"
+    "angular-route": "angular/bower-angular-route",
+    "d3": "mbostock/d3"
   }
 }

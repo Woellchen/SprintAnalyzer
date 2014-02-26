@@ -91,3 +91,55 @@ exports.SprintAnalyzeController = function($scope, $routeParams, Sprints, Socket
 		$scope.loading = false;
 	});
 }
+
+exports.ProjectHistoryController = function($scope, $routeParams, $q, Sprints) {
+	$scope.loading = true;
+	Sprints.getSprints($routeParams.projectId).then(function(sprints) {
+		var sprintPromises = [],
+			sprints = sprints.filter(function(sprint) { return sprint.state == 'CLOSED' });
+		sprints.sort(function(a, b) {
+			if (a.id < b.id) {
+				return -1;
+			} else {
+				return 1;
+			}
+		});
+
+		var start = Math.max(0, sprints.length - 10);
+		for (var i = start; i < sprints.length; i++) {
+			sprintPromises.push(Sprints.analyzeSprint($routeParams.projectId, sprints[i].id));
+		}
+
+		$q.all(sprintPromises).then(function(jiraSprints) {
+			var issuesData = [],
+				issuesAddedData = [],
+				sprint;
+			for (var i = 0; i < jiraSprints.length; i++) {
+				sprint = jiraSprints[i];
+				issuesData.push({
+					sprintId: sprint.sprint.id,
+					sprint: sprint.sprint.name,
+					incomplete: sprint.incompleteIssues.length,
+					complete: sprint.completedIssues.length
+				});
+				issuesAddedData.push({
+					sprintId: sprint.sprint.id,
+					sprint: sprint.sprint.name,
+					incomplete: sprint.incompletedAddedDuringSprintIssues.length,
+					complete: sprint.completedAddedDuringSprintIssues.length
+				});
+			}
+
+			$scope.projectName = sprint.projectName;
+			$scope.loading = false;
+			$scope.issues = {
+				'axis': 'Issues',
+				'data': issuesData
+			};
+			$scope.addedIssues = {
+				'axis': 'Issues',
+				'data': issuesAddedData
+			};
+		});
+	});
+};
