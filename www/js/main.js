@@ -1,10 +1,13 @@
 require('angular/angular');
 require('angular-route/angular-route');
 
+angular.module('d3Helper', []);
+
 require('./naturalSort');
 var controllers = require('./controllers');
+require('./directives/d3StackedBars');
 
-var app = angular.module('main', ['ngRoute', 'naturalSort'])
+var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 
 	.factory('Projects', function($q, $http) {
 		var getProjects = function() {
@@ -109,6 +112,10 @@ app.config(function($routeProvider) {
 			controller: 'SprintAnalyzeController',
 			templateUrl: '/html/sprint-analyze.html'
 		})
+		.when('/project/:projectId/history', {
+			controller: 'ProjectHistoryController',
+			templateUrl: '/html/project-history.html'
+		})
 		.otherwise({
 			redirectTo: '/'
 		});
@@ -117,3 +124,4 @@ app.config(function($routeProvider) {
 app.controller('ProjectListController', ['$scope', 'Projects', controllers.ProjectListController]);
 app.controller('SprintListController', ['$scope', '$routeParams', 'Sprints', controllers.SprintListController]);
 app.controller('SprintAnalyzeController', ['$scope', '$routeParams', 'Sprints', 'Socket', 'naturalService', controllers.SprintAnalyzeController]);
+app.controller('ProjectHistoryController', ['$scope', '$routeParams', '$q', 'Sprints', controllers.ProjectHistoryController]);

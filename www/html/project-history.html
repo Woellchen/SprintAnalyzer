@@ -1,0 +1,30 @@
+<div class="page-header">
+	<span ng-show="loading" class="loading">Loading..</span>
+	<h1>{{projectName}} <small>Project History</small></h1>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Issues</h3>
+				</div>
+				<div class="panel-body">
+					<span ng-show="loading" class="loading">Loading..</span>
+					<d3-stacked-bars data="issues" label="name"></d3-stacked-bars>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Issues added during Sprint</h3>
+				</div>
+				<div class="panel-body">
+					<span ng-show="loading" class="loading">Loading..</span>
+					<d3-stacked-bars data="addedIssues" label="name"></d3-stacked-bars>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
