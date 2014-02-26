@@ -65,11 +65,37 @@ var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 			return valueMapping[labelName] * numIssues;
 		};
 
+		var calculateVelocity = function(statistics, naturalService) {
+			var totalVelocity = 0,
+				numCompletedLabelIssues = 0,
+				groups = [];
+			for (var name in statistics.velocity.issueMapping) {
+				statistics.velocity.issueMapping[name].sort(naturalService.naturalSort);
+				numCompletedLabelIssues = getNumCompletedIssues(statistics.velocity.issueMapping[name], statistics.completedIssues);
+				totalVelocity += getAccumulatedVelocity(statistics.velocity.valueMapping, name, numCompletedLabelIssues);
+
+				if (statistics.velocity.issueMapping[name].length > 0) {
+					groups.push({
+						'name': name,
+						'info': 'completed ' + numCompletedLabelIssues + '/' + statistics.velocity.issueMapping[name].length,
+						'issues': statistics.velocity.issueMapping[name]
+					});
+				}
+			}
+
+
+			return {
+				'totalVelocity': totalVelocity,
+				'groups': groups
+			}
+		}
+
 		return {
 			getSprints: getSprints,
 			analyzeSprint: analyzeSprint,
 			getNumCompletedIssues: getNumCompletedIssues,
-			getAccumulatedVelocity: getAccumulatedVelocity
+			getAccumulatedVelocity: getAccumulatedVelocity,
+			calculateVelocity: calculateVelocity
 		};
 	})
 
@@ -124,4 +150,4 @@ app.config(function($routeProvider) {
 app.controller('ProjectListController', ['$scope', 'Projects', controllers.ProjectListController]);
 app.controller('SprintListController', ['$scope', '$routeParams', 'Sprints', controllers.SprintListController]);
 app.controller('SprintAnalyzeController', ['$scope', '$routeParams', 'Sprints', 'Socket', 'naturalService', controllers.SprintAnalyzeController]);
-app.controller('ProjectHistoryController', ['$scope', '$routeParams', '$q', 'Sprints', controllers.ProjectHistoryController]);
+app.controller('ProjectHistoryController', ['$scope', '$routeParams', '$q', 'Sprints', 'naturalService', controllers.ProjectHistoryController]);
