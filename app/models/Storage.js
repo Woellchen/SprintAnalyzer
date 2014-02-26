@@ -9,15 +9,16 @@ if (config.redis.database) {
 	client.select(config.redis.database, function() { /* ... */ });
 }
 
-var redisKeySprint = 'analyzer::sprint::';
+var redisKeySprint = 'analyzer::sprint::',
+	redisKeyRapidView = 'analyzer::rapidView::';
 
-var Storage = function() {
+function Storage() {
 
 }
 
 Storage.prototype.storeSprint = function(sprint, data) {
 	client.set(redisKeySprint + sprint, JSON.stringify(data));
-}
+};
 
 Storage.prototype.getSprint = function (sprint, callback) {
 	client.get(redisKeySprint + sprint, function(error, result) {
@@ -25,5 +26,14 @@ Storage.prototype.getSprint = function (sprint, callback) {
 	});
 };
 
+Storage.prototype.storeRapidViewId = function(projectId, rapidViewId) {
+	client.set(redisKeyRapidView + projectId, rapidViewId);
+};
+
+Storage.prototype.getRapidViewId = function (projectId, callback) {
+	client.get(redisKeyRapidView + projectId, function(error, result) {
+		callback(error, result);
+	});
+};
 
 module.exports = Storage;
