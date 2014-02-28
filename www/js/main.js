@@ -11,14 +11,16 @@ require('./directives/d3PieChart');
 var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 
 	.factory('Projects', function($q, $http) {
+		var projectPromise;
 		var getProjects = function() {
-			var deferred = $q.defer();
+			if (projectPromise) return projectPromise.promise;
 
+			projectPromise = $q.defer();
 			$http.get('/projects/list').success(function(projects) {
-				deferred.resolve(projects);
+				projectPromise.resolve(projects);
 			});
 
-			return deferred.promise;
+			return projectPromise.promise;
 		};
 
 		return {
@@ -27,24 +29,29 @@ var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 	})
 
 	.factory('Sprints', function($q, $http) {
+		var projectPromises = [],
+			sprintPromises = [];
 		var getSprints = function(projectId) {
-			var deferred = $q.defer();
+			if (projectPromises[projectId]) return projectPromises[projectId].promise;
+			projectPromises[projectId] = $q.defer();
 
 			$http.get('/projects/' + projectId + '/sprints/list').success(function(sprints) {
-				deferred.resolve(sprints);
+				projectPromises[projectId].resolve(sprints);
 			});
 
-			return deferred.promise;
+			return projectPromises[projectId].promise;
 		};
 
 		var analyzeSprint = function(projectId, sprintId) {
-			var deferred = $q.defer();
+			if (!sprintPromises[projectId]) sprintPromises[projectId] = [];
+			if (sprintPromises[projectId][sprintId]) return sprintPromises[projectId][sprintId].promise;
 
+			sprintPromises[projectId][sprintId] = $q.defer();
 			$http.get('/projects/' + projectId + '/sprints/' + sprintId + '/analyze').success(function(statictics) {
-				deferred.resolve(statictics);
+				sprintPromises[projectId][sprintId].resolve(statictics);
 			});
 
-			return deferred.promise;
+			return sprintPromises[projectId][sprintId].promise;
 		};
 
 		var getNumCompletedIssues = function(undeterminedIssues, completedIssues) {
