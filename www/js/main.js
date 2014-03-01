@@ -68,12 +68,18 @@ var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 
 		var calculateVelocity = function(statistics, naturalService) {
 			var totalVelocity = 0,
-				numCompletedLabelIssues = 0,
-				groups = [];
+				numCompletedLabelIssues,
+				groups = [],
+				issueKey;
 			for (var name in statistics.velocity.issueMapping) {
 				statistics.velocity.issueMapping[name].sort(naturalService.naturalSort);
 				numCompletedLabelIssues = getNumCompletedIssues(statistics.velocity.issueMapping[name], statistics.completedIssues);
 				totalVelocity += getAccumulatedVelocity(statistics.velocity.valueMapping, name, numCompletedLabelIssues);
+
+				for (var i in statistics.velocity.issueMapping[name]) {
+					issueKey = statistics.velocity.issueMapping[name][i];
+					statistics.velocity.issueMapping[name][i] = issueKey + ": " + statistics.jiraIssues[issueKey].fields.summary;
+				}
 
 				if (statistics.velocity.issueMapping[name].length > 0) {
 					groups.push({
