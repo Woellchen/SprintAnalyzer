@@ -121,13 +121,18 @@ var analyzeSprint = function(request, reply) {
 					}
 
 					Q.all(issuePromises).then(function(jiraIssues) {
-						response.jiraIssues = jiraIssues;
+						var issues = {};
+						for (var i in jiraIssues) {
+							issues[jiraIssues[i].key] = jiraIssues[i];
+						}
+
+						response.jiraIssues = issues;
 
 						if ('CLOSED' === response.sprint.state) {
 							storage.storeSprint(request.params.sprintId, response);
 						}
 						response.velocity.valueMapping = velocity.getVelocityValueMapping();
-						response.velocity.issueMapping = velocity.groupIssues(jiraIssues);
+						response.velocity.issueMapping = velocity.groupIssues(issues);
 
 						reply(response).type('application/json');
 					});
