@@ -15,7 +15,7 @@
                 <div id="collapse_{{panelGroup.id}}_{{$index}}" class="panel-collapse collapse">
                     <div class="panel-body">
                         <ul>
-                            <li ng-repeat="issue in accordion.issues"><a href="{{baseUrl}}{{issue}}" target="_blank">{{issue}}</a></li>
+                            <li ng-repeat="issue in accordion.issues"><a href="{{baseUrl}}{{issue.key}}" target="_blank">{{issue.key}}: {{issue.summary}}</a></li>
                         </ul>
                     </div>
                 </div>

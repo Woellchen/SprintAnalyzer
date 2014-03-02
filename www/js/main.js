@@ -78,7 +78,7 @@ var app = angular.module('main', ['ngRoute', 'naturalSort', 'd3Helper'])
 
 				for (var i in statistics.velocity.issueMapping[name]) {
 					issueKey = statistics.velocity.issueMapping[name][i];
-					statistics.velocity.issueMapping[name][i] = issueKey + ": " + statistics.jiraIssues[issueKey].fields.summary;
+					statistics.velocity.issueMapping[name][i] = {'key' : issueKey, 'summary': statistics.jiraIssues[issueKey].fields.summary};
 				}
 
 				if (statistics.velocity.issueMapping[name].length > 0) {
